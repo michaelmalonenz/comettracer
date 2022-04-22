@@ -1,0 +1,13 @@
+{
+    "lights": [{
+        "type": "point",
+        "origin": {"x": 1, "y": 1, "z": -2},
+        "colour": {"r": 1.0, "g": 1.0, "b": 1.0}
+    }],
+    "objects": [{
+        "type": "sphere",
+        "centre": {},
+        "radius": 0.5,
+        "colour": {"r": 1.0, "g": 1.0, "b": 0}
+    }]
+}

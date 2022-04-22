@@ -1,0 +1,18 @@
+import 'json' as json
+import 'object_factory' as objfactory
+import 'light' as light
+
+class Scene {
+    init() {
+        var scene = json.parseJsonFromFile('scene.json')
+        self.lights = []
+        self.objects = []
+        print(scene["lights"])
+        foreach (var lightHash in scene["lights"]) {
+            self.lights.push(light.Light(lightHash))
+        }
+        foreach (var obj in scene["objects"]) {
+            self.objects.push(objfactory.createObject(obj))
+        }
+    }
+}

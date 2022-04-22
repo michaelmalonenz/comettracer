@@ -1,9 +1,11 @@
 import 'vector3D' as vector
 import 'colour' as colour
+import 'scene' as scene
 
 var WIDTH = 500
 var HEIGHT = 500
 var AMBIENT = colour.Colour(vector.Vector3D(0.2, 0.2, 0.2))
+var scene = scene.Scene()
 
 function trace_ray(origin, direction, depth = 0) {
     if (depth == 3) {

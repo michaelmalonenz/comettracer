@@ -1,0 +1,8 @@
+import 'vector3D' as vector
+
+class Light {
+    init(lightHash) {
+        var colour = lightHash['colour']
+        self.colour = vector.Vector3D(colour['r'], colour['g'], colour['b'])
+    }
+}

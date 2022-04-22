@@ -1,0 +1,120 @@
+function skipWhitespace (iter) {
+    while (iter.has_next?()) {
+        var char = iter.peek_next()
+        if (char == ' ' || char == '\n' || char == '\r') {
+            iter.get_next()
+        } else {
+            return
+        }
+    }
+}
+
+function consume (iter, expected) {
+    var actual = iter.get_next()
+    if (actual != expected) {
+        throw Exception("Expected '" + expected + "' but got '" + actual + "'")
+    }
+}
+
+function parseNumber (iter) {
+    var num = ''
+    var char = iter.peek_next()
+    while (iter.has_next?() && (char.number?() || char == '-')) {
+        num += char
+        iter.get_next()
+        char = iter.peek_next()
+    }
+    if (char == '.') {
+        consume(iter, '.')
+        char = iter.peek_next()
+        while (iter.has_next?() && char.number?()) {
+            num += char
+            iter.get_next()
+            char = iter.peek_next()
+        }   
+    }
+    return Number.parse(num)
+}
+
+function parseString (iter) {
+    consume(iter, '"')
+    var result = ''
+    var char = iter.peek_next()
+    while (iter.has_next?() && char != '"') {
+        result += iter.get_next()
+        char = iter.peek_next()
+    }
+    consume(iter, '"')
+    return result
+}
+
+function parseArray (iter) {
+    consume(iter, '[')
+    var result = []
+    var char = iter.peek_next()
+    while (iter.has_next?() && char != ']') {
+        result.append(parseJson(iter))
+        skipWhitespace(iter)
+        char = iter.peek_next()
+        if (char == ',') {
+            consume(iter, ',')
+        }
+    }
+    consume(iter, ']')
+    return result
+}
+
+function parseObject (iter) {
+    consume(iter, '{')
+    var result = {}
+    while (iter.has_next?()) {
+        skipWhitespace(iter)
+        var char = iter.peek_next()
+        if (char == '"') {
+            var name = parseString(iter)
+            skipWhitespace(iter)
+            consume(iter, ':')
+            skipWhitespace(iter)
+            var obj = parseJson(iter)
+            result[name] = obj
+        } else if (char == ',') {
+            consume(iter, ',')
+            next
+        } else if (char == '}') {
+            consume(iter, '}')
+            break
+        } else {
+            throw Exception("Couldn't parse json: '" + char + "'")
+        }
+    }
+    return result
+}
+
+function parseJson (iter) {
+    while (iter.has_next?()) {
+        skipWhitespace(iter)
+        var char = iter.peek_next()
+        if (char == '{') {
+            return parseObject(iter)
+        } else if (char == '[') {
+            return parseArray(iter)
+        } else if (char == '"') {
+            return parseString(iter)
+        } else if (char == '-' || char.number?()) {
+            return parseNumber(iter)
+        } else {
+            throw Exception("Couldn't parse json: '" + char + "'")
+        }
+    }
+}
+
+function parseJsonFromString (str) {
+    return parseJson(str.iterator())
+}
+
+function parseJsonFromFile (filename) {
+    var sceneFile = File.open(filename, FOPEN.READ_ONLY)
+    var sceneContents = sceneFile.read()
+    sceneFile.close()
+    return parseJsonFromString(sceneContents)
+}

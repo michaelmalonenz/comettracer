@@ -1,0 +1,8 @@
+import 'sphere' as sphere
+
+function createObject (objHash) {
+    var type = objHash["type"]
+    if (type == 'sphere') {
+        return sphere.Sphere(objHash)
+    }
+}
