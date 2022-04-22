@@ -1,0 +1,13 @@
+function min(a, b) {
+    if (a < b)
+        return a
+    return b
+}
+
+class Colour {
+    init(vector) {
+        self.r = min(vector.x * 255, 255)
+        self.g = min(vector.y * 255, 255)
+        self.b = min(vector.z * 255, 255)
+    }
+}

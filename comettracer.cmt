@@ -1,0 +1,26 @@
+import 'vector3D' as vector
+import 'colour' as colour
+
+var WIDTH = 500
+var HEIGHT = 500
+var AMBIENT = colour.Colour(vector.Vector3D(0.2, 0.2, 0.2))
+
+function trace_ray(origin, direction, depth = 0) {
+    if (depth == 3) {
+        return AMBIENT
+    }
+
+    return AMBIENT
+}
+
+var image = Image(WIDTH, HEIGHT)
+var horizontal_dir = vector.Vector3D(0, 0, -1)
+
+for (var y = 0; y < HEIGHT; y+=1) {
+    for (var x = 0; x < WIDTH; x+=1) {
+        var colour = trace_ray(vector.Vector3D(x, y, 0), horizontal_dir)
+        image.set_pixel(x, y, colour.r, colour.g, colour.b)
+    }
+}
+
+image.write_to_file("traced.png", IMAGE_FORMAT.PNG)
