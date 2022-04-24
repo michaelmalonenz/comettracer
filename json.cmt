@@ -25,6 +25,7 @@ function parseNumber (iter) {
         char = iter.peek_next()
     }
     if (char == '.') {
+        num += char
         consume(iter, '.')
         char = iter.peek_next()
         while (iter.has_next?() && char.number?()) {

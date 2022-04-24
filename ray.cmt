@@ -1,0 +1,12 @@
+import 'vector3D' as vector
+
+class Ray {
+    init(position, direction) {
+        self.position = position
+        self.direction = direction
+    }
+
+    at(t) {
+        return self.position + self.direction * t
+    }
+}

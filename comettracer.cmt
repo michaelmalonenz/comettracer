@@ -1,27 +1,67 @@
 import 'vector3D' as vector
-import 'colour' as colour
 import 'scene' as scene
+import 'ray' as ray
 
-var WIDTH = 500
-var HEIGHT = 500
-var AMBIENT = colour.Colour(vector.Vector3D(0.2, 0.2, 0.2))
+var WIDTH = 800
+var HEIGHT = 400
+var WHITE = vector.Vector3D(1.0, 1.0, 1.0)
+var LIGHT_BLUE = vector.Vector3D(0.5, 0.7, 1.0)
+var AMBIENT = vector.Vector3D(0.1, 0.1, 0.1)
 var scene = scene.Scene()
+var EPSILON = 0.00000001
 
-function trace_ray(origin, direction, depth = 0) {
+
+function background_colour(ray) {
+    var height = ray.direction.normalise().y
+    var t = 0.5 * height + 1
+    var colour = WHITE * (1 - t) + LIGHT_BLUE * t
+    return vector.Vector3D(colour.x, colour.y, colour.z)
+}
+
+function trace_ray(incident, depth = 0) {
     if (depth == 3) {
         return AMBIENT
     }
 
-    return AMBIENT
+    var intersection = scene.find_intersection(incident)
+    if (!intersection.nil?()) {
+        var colour = intersection.object.colour * 0.1 # ambient
+
+        foreach (var light in scene.lights) {
+            var lightVector = (light.position - intersection.position).normalise()
+            var cosTheta = Number.max(intersection.normal.dot(lightVector), 0)
+            if (cosTheta > 0) {
+                colour += intersection.object.colour * cosTheta
+            }
+
+            var reflection_angle = lightVector.dot(intersection.normal)
+            var reflection = (intersection.normal - lightVector) * 2 * reflection_angle
+            var specular = Number.max(reflection_angle, 0).power(0.3 * intersection.object.shininess)
+            colour += light.colour * specular
+        }
+
+        # gamma-corrected with gamma-2
+        return vector.Vector3D(
+            colour.x.square_root(),
+            colour.y.square_root(),
+            colour.z.square_root())
+    }
+
+    return background_colour(incident)
 }
 
 var image = Image(WIDTH, HEIGHT)
-var horizontal_dir = vector.Vector3D(0, 0, -1)
-
+var origin = vector.Vector3D()
+var horizontal = vector.Vector3D(4, 0, 0)
+var vertical = vector.Vector3D(0, 2, 0)
+var lower_left_corner = vector.Vector3D(-2, -1, -1)
 for (var y = 0; y < HEIGHT; y+=1) {
     for (var x = 0; x < WIDTH; x+=1) {
-        var colour = trace_ray(vector.Vector3D(x, y, 0), horizontal_dir)
-        image.set_pixel(x, y, colour.r, colour.g, colour.b)
+        var u = horizontal * (x / WIDTH)
+        var v = vertical * (y / HEIGHT)
+        var incident = ray.Ray(origin, lower_left_corner + u + v)
+        var colour = trace_ray(incident)
+        image.set_pixel(x, y, colour.r(), colour.g(), colour.b())
     }
 }
 

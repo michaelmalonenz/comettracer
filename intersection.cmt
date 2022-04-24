@@ -1,0 +1,8 @@
+class Intersection {
+    init (t, position, normal, object) {
+        self.t = t
+        self.position = position
+        self.normal = normal
+        self.object = object
+    }
+}

@@ -4,5 +4,7 @@ class Light {
     init(lightHash) {
         var colour = lightHash['colour']
         self.colour = vector.Vector3D(colour['r'], colour['g'], colour['b'])
+        var position = lightHash['position']
+        self.position = vector.Vector3D(position['x'], position['y'], position['z'])
     }
 }

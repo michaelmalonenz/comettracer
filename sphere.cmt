@@ -1,5 +1,58 @@
+import 'vector3D' as vector
+import 'intersection' as intersection
+
+var EPSILON = 0.00000001
+
+
 class Sphere {
     init(objHash) {
-        
+        self.center = vector.Vector3D(
+            objHash['center']['x'],
+            objHash['center']['y'],
+            objHash['center']['z'])
+        self.radius = objHash['radius']
+        self.colour = vector.Vector3D(
+            objHash['colour']['r'],
+            objHash['colour']['g'],
+            objHash['colour']['b'])
+        self.shininess = objHash['shininess']
+    }
+
+    intersect(ray) {
+        var local_ray_pos = ray.position - self.center
+
+        var a = ray.direction.dot(ray.direction)
+        var b = 2.0 * ray.direction.dot(local_ray_pos)
+        var c = local_ray_pos.dot(local_ray_pos) - (self.radius * self.radius)
+
+        var discriminant = b * b - 4.0 * a * c
+
+        # If the discriminant is negative, there are no real roots;
+        # the ray never touches nor intersects the sphere.
+        if (discriminant < EPSILON)
+            return nil
+
+        # compute q
+        var disc_sqrt = discriminant.square_root()
+        var q = b < EPSILON ? (-b - disc_sqrt) / 2.0 : (-b + disc_sqrt) / 2.0
+
+        # compute t0 and t1
+        var t0 = q / a
+        var t1 = c / q
+
+        # prefer a t that is not negative, because that would be odd,
+        # a ray that goes in the opposite direction.
+        var t = t0 < EPSILON ? t1 : t0
+
+        # if both t's are negative, the object is on the other side
+        # of the ray apparently. No hits.
+        if (t < EPSILON)
+            return nil
+
+        # Calculate normal.
+        var position = ray.at(t)
+        var normal = (position - self.center).normalise()
+
+        return intersection.Intersection(t, position, normal, self)
     }
 }

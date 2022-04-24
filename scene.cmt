@@ -7,12 +7,26 @@ class Scene {
         var scene = json.parseJsonFromFile('scene.json')
         self.lights = []
         self.objects = []
-        print(scene["lights"])
         foreach (var lightHash in scene["lights"]) {
-            self.lights.push(light.Light(lightHash))
+            var licht = light.Light(lightHash)
+            self.lights.push(licht)
         }
         foreach (var obj in scene["objects"]) {
             self.objects.push(objfactory.createObject(obj))
         }
+    }
+
+    find_intersection(incident_ray) {
+        var closest = nil
+        foreach (var obj in self.objects) {
+            var result = obj.intersect(incident_ray)
+            if (!result.nil?())
+            {
+                if (closest.nil?() || result.t < closest.t) {
+                    closest = result
+                }
+            }
+        }
+        return closest
     }
 }

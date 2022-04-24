@@ -5,6 +5,18 @@ class Vector3D {
         self.z = z
     }
 
+    r() {
+        return Number.min(self.x * 255, 255)
+    }
+
+    g() {
+        return Number.min(self.y * 255, 255)
+    }
+
+    b() {
+        return Number.min(self.z * 255, 255)
+    }
+
     cross(rhs) {
         return Vector3D(
             (self.y * rhs.z) - (self.z * rhs.y),
@@ -16,15 +28,42 @@ class Vector3D {
         return (self.x * rhs.x) + (self.y * rhs.y) + (self.z * rhs.z)
     }
 
-    normalize() {
+    normalise() {
         var length = self.length()
+        if (length == 0)
+            length = 1
         return Vector3D(
-            self.x * length,
-		    self.y * length,
-		    self.z * length)
+            self.x / length,
+		    self.y / length,
+		    self.z / length)
     }
 
     length() {
         return (self.x*self.x + self.y*self.y + self.z*self.z).square_root()
+    }
+
+    to_string() {
+        return "[" + self.x.to_string() + ", " + self.y.to_string() + ", " + self.z.to_string() + "]"
+    }
+
+    operator - (other) {
+        return Vector3D(
+            self.x - other.x,
+		    self.y - other.y,
+		    self.z - other.z)
+    }
+
+    operator + (other) {
+        return Vector3D(
+            self.x + other.x,
+		    self.y + other.y,
+		    self.z + other.z)
+    }
+
+    operator * (scalar) {
+        return Vector3D(
+            self.x * scalar,
+            self.y * scalar,
+            self.z * scalar)
     }
 }
