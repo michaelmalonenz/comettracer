@@ -2,13 +2,17 @@ import 'vector3D' as vector
 import 'scene' as scene
 import 'ray' as ray
 
+
+var EPSILON = 0.00000001
 var WIDTH = 800
 var HEIGHT = 400
 var WHITE = vector.Vector3D(1.0, 1.0, 1.0)
 var LIGHT_BLUE = vector.Vector3D(0.5, 0.7, 1.0)
-var AMBIENT = vector.Vector3D(0.1, 0.1, 0.1)
 var scene = scene.Scene()
-var EPSILON = 0.00000001
+
+var REFLECTED_LIGHT_SCALAR = 0.05
+var DIFFUSE_LIGHT_SCALAR = 0.9
+var AMBIENT_LIGHT_SCALAR = 0.1
 
 
 function background_colour(ray) {
@@ -20,25 +24,29 @@ function background_colour(ray) {
 
 function trace_ray(incident, depth = 0) {
     if (depth == 3) {
-        return AMBIENT
+        return background_colour(incident)
     }
 
     var intersection = scene.find_intersection(incident)
     if (!intersection.nil?()) {
-        var colour = intersection.object.colour * 0.1 # ambient
+        var colour = intersection.object.colour * AMBIENT_LIGHT_SCALAR
 
         foreach (var light in scene.lights) {
             var lightVector = (light.position - intersection.position).normalise()
             var cosTheta = Number.max(intersection.normal.dot(lightVector), 0)
             if (cosTheta > 0) {
-                colour += intersection.object.colour * cosTheta
+                colour += intersection.object.colour * cosTheta * DIFFUSE_LIGHT_SCALAR
             }
 
             var reflection_angle = lightVector.dot(intersection.normal)
-            var reflection = (intersection.normal - lightVector) * 2 * reflection_angle
+            var reflection = ((intersection.normal - lightVector) * 2 * reflection_angle).normalise()
             var viewVector = (incident.position - intersection.position).normalise()
             var specular = Number.max(reflection.dot(viewVector), 0).power(0.3 * intersection.object.shininess)
             colour += light.colour * specular
+
+            # move it the tiniest fraction away from the object, so we don't re-collide with it.
+            var reflection_position = intersection.position + (reflection * EPSILON)
+            colour += trace_ray(ray.Ray(reflection_position, reflection), depth + 1) * REFLECTED_LIGHT_SCALAR
         }
 
         # gamma-corrected with gamma-2
@@ -56,6 +64,7 @@ var origin = vector.Vector3D()
 var horizontal = vector.Vector3D(4, 0, 0)
 var vertical = vector.Vector3D(0, 2, 0)
 var lower_left_corner = vector.Vector3D(-2, -1, -1)
+
 for (var y = 0; y < HEIGHT; y+=1) {
     for (var x = 0; x < WIDTH; x+=1) {
         var u = horizontal * (x / WIDTH)
