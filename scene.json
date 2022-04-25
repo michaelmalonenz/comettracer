@@ -9,6 +9,6 @@
         "center": {"x": 0, "y": 0, "z": -10},
         "radius": 4,
         "colour": {"r": 0.9, "g": 0.9, "b": 0},
-        "shininess": 10
+        "shininess": 50
     }]
 }

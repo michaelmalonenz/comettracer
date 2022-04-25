@@ -36,7 +36,8 @@ function trace_ray(incident, depth = 0) {
 
             var reflection_angle = lightVector.dot(intersection.normal)
             var reflection = (intersection.normal - lightVector) * 2 * reflection_angle
-            var specular = Number.max(reflection_angle, 0).power(0.3 * intersection.object.shininess)
+            var viewVector = (incident.position - intersection.position).normalise()
+            var specular = Number.max(reflection.dot(viewVector), 0).power(0.3 * intersection.object.shininess)
             colour += light.colour * specular
         }
 
