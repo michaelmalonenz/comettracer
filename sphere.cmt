@@ -1,8 +1,6 @@
 import 'vector3D' as vector
 import 'intersection' as intersection
 
-var EPSILON = 0.00000001
-
 
 class Sphere {
     init(objHash) {
@@ -29,12 +27,12 @@ class Sphere {
 
         # If the discriminant is negative, there are no real roots;
         # the ray never touches nor intersects the sphere.
-        if (discriminant < EPSILON)
+        if (discriminant < vector.EPSILON)
             return nil
 
         # compute q
         var disc_sqrt = discriminant.square_root()
-        var q = b < EPSILON ? (-b - disc_sqrt) / 2.0 : (-b + disc_sqrt) / 2.0
+        var q = b < vector.EPSILON ? (-b - disc_sqrt) / 2.0 : (-b + disc_sqrt) / 2.0
 
         # compute t0 and t1
         var t0 = q / a
@@ -42,11 +40,11 @@ class Sphere {
 
         # prefer a t that is not negative, because that would be odd,
         # a ray that goes in the opposite direction.
-        var t = t0 < EPSILON ? t1 : t0
+        var t = t0 < vector.EPSILON ? t1 : t0
 
         # if both t's are negative, the object is on the other side
         # of the ray apparently. No hits.
-        if (t < EPSILON)
+        if (t < vector.EPSILON)
             return nil
 
         # Calculate normal.

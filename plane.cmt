@@ -1,0 +1,33 @@
+import 'intersection' as intersection
+import 'vector3D' as vector
+
+class Plane {
+    init(objHash) {
+        self.center = vector.Vector3D(
+            objHash['center']['x'],
+            objHash['center']['y'],
+            objHash['center']['z'])
+        self.normal = vector.Vector3D(
+            objHash['normal']['x'],
+            objHash['normal']['y'],
+            objHash['normal']['z'])
+        self.width = objHash['width']
+        self.length = objHash['length']
+        self.colour = vector.Vector3D(
+            objHash['colour']['r'],
+            objHash['colour']['g'],
+            objHash['colour']['b'])
+        self.shininess = objHash['shininess']
+    }
+
+    intersect(ray) {
+        var denominator = ray.direction.dot(ray.direction)
+        if (denominator > vector.EPSILON) {
+            var t = (self.center - ray.position).dot(self.normal) / denominator
+            if (t >= 0) {
+                return intersection.Intersection(t, ray.position * t, self.normal, self)
+            }
+        }
+        return nil
+    }
+}

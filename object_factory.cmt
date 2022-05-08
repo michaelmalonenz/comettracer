@@ -1,8 +1,15 @@
 import 'sphere' as sphere
+import 'plane' as plane
 
 function createObject (objHash) {
     var type = objHash["type"]
     if (type == 'sphere') {
         return sphere.Sphere(objHash)
+    }
+    else if (type == 'plane') {
+        return plane.Plane(objHash)
+    }
+    else {
+        print('Unknown object type: ', type)
     }
 }

@@ -1,3 +1,6 @@
+var EPSILON = 0.00000001
+
+
 class Vector3D {
     init(x=0.0, y=0.0, z=0.0) {
         self.x = x
@@ -6,15 +9,15 @@ class Vector3D {
     }
 
     r() {
-        return Number.min(self.x * 255, 255)
+        return Number.min(self.x.square_root() * 255, 255)
     }
 
     g() {
-        return Number.min(self.y * 255, 255)
+        return Number.min(self.y.square_root() * 255, 255)
     }
 
     b() {
-        return Number.min(self.z * 255, 255)
+        return Number.min(self.z.square_root() * 255, 255)
     }
 
     cross(rhs) {

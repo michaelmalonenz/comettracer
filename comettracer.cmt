@@ -3,14 +3,13 @@ import 'scene' as scene
 import 'ray' as ray
 
 
-var EPSILON = 0.00000001
 var WIDTH = 800
 var HEIGHT = 400
 var WHITE = vector.Vector3D(1.0, 1.0, 1.0)
 var LIGHT_BLUE = vector.Vector3D(0.5, 0.7, 1.0)
 var scene = scene.Scene()
 
-var REFLECTED_LIGHT_SCALAR = 0.05
+var REFLECTED_LIGHT_SCALAR = 0.1
 var DIFFUSE_LIGHT_SCALAR = 0.9
 var AMBIENT_LIGHT_SCALAR = 0.1
 
@@ -38,22 +37,21 @@ function trace_ray(incident, depth = 0) {
                 colour += intersection.object.colour * cosTheta * DIFFUSE_LIGHT_SCALAR
             }
 
-            var reflection_angle = lightVector.dot(intersection.normal)
-            var reflection = ((intersection.normal - lightVector) * 2 * reflection_angle).normalise()
             var viewVector = (incident.position - intersection.position).normalise()
+            var reflection_angle = viewVector.dot(intersection.normal)
+            var reflection = ((intersection.normal - lightVector) * (2 * reflection_angle)).normalise()
             var specular = Number.max(reflection.dot(viewVector), 0).power(0.3 * intersection.object.shininess)
             colour += light.colour * specular
 
             # move it the tiniest fraction away from the object, so we don't re-collide with it.
-            var reflection_position = intersection.position + (reflection * EPSILON)
+            var reflection_position = intersection.position + (reflection * vector.EPSILON)
             colour += trace_ray(ray.Ray(reflection_position, reflection), depth + 1) * REFLECTED_LIGHT_SCALAR
         }
 
-        # gamma-corrected with gamma-2
         return vector.Vector3D(
-            colour.x.square_root(),
-            colour.y.square_root(),
-            colour.z.square_root())
+            colour.x,
+            colour.y,
+            colour.z)
     }
 
     return background_colour(incident)

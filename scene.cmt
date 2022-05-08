@@ -4,7 +4,7 @@ import 'light' as light
 
 class Scene {
     init() {
-        var scene = json.parseJsonFromFile('scene.json')
+        var scene = json.parse_from_file('scene.json')
         self.lights = []
         self.objects = []
         foreach (var lightHash in scene["lights"]) {
