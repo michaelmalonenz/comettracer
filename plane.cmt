@@ -10,7 +10,7 @@ class Plane {
         self.normal = vector.Vector3D(
             objHash['normal']['x'],
             objHash['normal']['y'],
-            objHash['normal']['z'])
+            objHash['normal']['z']).normalise()
         self.width = objHash['width']
         self.length = objHash['length']
         self.colour = vector.Vector3D(
@@ -21,10 +21,10 @@ class Plane {
     }
 
     intersect(ray) {
-        var denominator = ray.direction.dot(ray.direction)
-        if (denominator > vector.EPSILON) {
+        var denominator = self.normal.dot(ray.direction)
+        if (denominator.absolute_value() > vector.EPSILON) {
             var t = (self.center - ray.position).dot(self.normal) / denominator
-            if (t >= 0) {
+            if (t >= vector.EPSILON) {
                 return intersection.Intersection(t, ray.position * t, self.normal, self)
             }
         }
