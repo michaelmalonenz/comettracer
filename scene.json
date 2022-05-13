@@ -29,6 +29,6 @@
         "width": 6,
         "length": 8,
         "colour": {"r": 0, "g": 0.9, "b": 0},
-        "shininess": 10
+        "shininess": 0
     }]
 }

@@ -60,21 +60,31 @@ class Scene {
             var colour = intersection.object.colour * AMBIENT_LIGHT_SCALAR
 
             foreach (var light in self.lights) {
-                var lightVector = (light.position - intersection.position).normalise()
-                var cosTheta = Number.max(intersection.normal.dot(lightVector), 0)
-                if (cosTheta > 0) {
-                    colour += intersection.object.colour * cosTheta * DIFFUSE_LIGHT_SCALAR
+                var light_vector = (light.position - intersection.position).normalise()
+                # shadows
+                var shadow_position = intersection.position + (light_vector * vector.EPSILON)
+                var shadow_intersection = self._find_intersection(ray.Ray(shadow_position, light_vector))
+                if (shadow_intersection.nil?()) {
+                    # diffuse lighting
+                    var cosTheta = Number.max(intersection.normal.dot(light_vector), 0)
+                    if (cosTheta > 0) {
+                        colour += intersection.object.colour * cosTheta * DIFFUSE_LIGHT_SCALAR
+                    }
+
+                    # specular lighting
+                    var view_vector = (incident.position - intersection.position).normalise()
+                    var reflection_angle = view_vector.dot(intersection.normal)
+                    var reflection = ((intersection.normal - light_vector) * (2 * reflection_angle)).normalise()
+                    var specular = Number.max(reflection.dot(view_vector), 0).power(0.3 * intersection.object.shininess)
+                    colour += light.colour * specular
+
+                    if (intersection.object.shininess > 0) {
+                        # reflection
+                        # move it the tiniest fraction away from the object, so we don't re-collide with it.
+                        var reflection_position = intersection.position + (reflection * vector.EPSILON)
+                        colour += (self.trace_ray(ray.Ray(reflection_position, reflection), depth + 1) * REFLECTED_LIGHT_SCALAR)
+                    }
                 }
-
-                var viewVector = (incident.position - intersection.position).normalise()
-                var reflection_angle = viewVector.dot(intersection.normal)
-                var reflection = ((intersection.normal - lightVector) * (2 * reflection_angle)).normalise()
-                var specular = Number.max(reflection.dot(viewVector), 0).power(0.3 * intersection.object.shininess)
-                colour += light.colour * specular
-
-                # move it the tiniest fraction away from the object, so we don't re-collide with it.
-                var reflection_position = intersection.position + (reflection * vector.EPSILON)
-                colour += self.trace_ray(ray.Ray(reflection_position, reflection), depth + 1) * REFLECTED_LIGHT_SCALAR
             }
 
             return vector.Vector3D(
