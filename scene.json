@@ -1,7 +1,7 @@
 {
     "lights": [{
         "type": "point",
-        "position": {"x": -5, "y": 10, "z": -2},
+        "position": {"x": -8, "y": 10, "z": -2},
         "colour": {"r": 0.8, "g": 0.8, "b": 0.3}
     }],
     "objects": [{
@@ -15,7 +15,7 @@
         "center": {"x": -5, "y": 2, "z": -10},
         "radius": 2,
         "colour": {"r": 0, "g": 0, "b": 0.9},
-        "shininess": 50
+        "shininess": 20
     },{
         "type": "sphere",
         "center": {"x": 5, "y": 2, "z": -10},
@@ -29,6 +29,14 @@
         "width": 6,
         "length": 8,
         "colour": {"r": 0, "g": 0.9, "b": 0},
-        "shininess": 0
+        "shininess": 0.5
+    },{
+        "type": "plane",
+        "normal": {"x": 0, "y": 0, "z": 1},
+        "center": {"x": 0, "y": 0, "z": -10},
+        "width": 6,
+        "length": 8,
+        "colour": {"r": 0, "g": 0.9, "b": 0.9},
+        "shininess": 15
     }]
 }

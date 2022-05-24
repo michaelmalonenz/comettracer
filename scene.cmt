@@ -9,6 +9,7 @@ var HEIGHT = 400
 var SAMPLES_PER_PIXEL = 8
 var WHITE = vector.Vector3D(1.0, 1.0, 1.0)
 var LIGHT_BLUE = vector.Vector3D(0.5, 0.7, 1.0)
+var BACKGROUND = vector.Vector3D(0.05, 0.05, 0.05)
 
 var REFLECTED_LIGHT_SCALAR = 0.1
 var DIFFUSE_LIGHT_SCALAR = 0.9
@@ -41,13 +42,6 @@ class Scene {
             }
         }
         return closest
-    }
-
-    _background_colour(ray) {
-        var height = ray.direction.normalise().y
-        var t = 0.5 * height + 1
-        var colour = WHITE * (1 - t) + LIGHT_BLUE * t
-        return vector.Vector3D(colour.x, colour.y, colour.z)
     }
 
     trace_ray(incident, depth = 0) {
@@ -93,7 +87,7 @@ class Scene {
                 colour.z)
         }
 
-        return self._background_colour(incident)
+        return BACKGROUND
     }
 
     render() {
