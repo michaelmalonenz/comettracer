@@ -1,5 +1,9 @@
 var EPSILON = 0.00000001
 
+function clamp(num) {
+    return Number.max(Number.min(1, num), 0)
+}
+
 
 class Vector3D {
     init(x=0.0, y=0.0, z=0.0) {
@@ -9,15 +13,15 @@ class Vector3D {
     }
 
     r() {
-        return Number.min(self.x.square_root() * 255, 255)
+        return clamp(self.x).square_root() * 255
     }
 
     g() {
-        return Number.min(self.y.square_root() * 255, 255)
+        return clamp(self.y).square_root() * 255
     }
 
     b() {
-        return Number.min(self.z.square_root() * 255, 255)
+        return clamp(self.z).square_root() * 255
     }
 
     cross(rhs) {
@@ -41,8 +45,16 @@ class Vector3D {
 		    self.z / length)
     }
 
+    length_squared() {
+        return (self.x*self.x + self.y*self.y + self.z*self.z)
+    }
+
     length() {
-        return (self.x*self.x + self.y*self.y + self.z*self.z).square_root()
+        return self.length_squared().square_root()
+    }
+
+    near_zero?() {
+        return (self.x.absolute_value() < EPSILON && self.y.absolute_value() < EPSILON && self.z.absolute_value() < EPSILON)
     }
 
     to_string() {
@@ -76,5 +88,25 @@ class Vector3D {
             self.y / scalar,
             self.z / scalar
         )
+    }
+
+    static _random_unit_part() {
+        return (Number.random() * 2) - 1
+    }
+
+    static random() {
+        return Vector3D(
+            Vector3D._random_unit_part(),
+            Vector3D._random_unit_part(),
+            Vector3D._random_unit_part())
+    }
+
+    static random_unit_vector() {
+        while (true) {
+            var p = Vector3D.random()
+            if (p.length_squared() >= 1)
+                next
+            return p.normalise()
+        }
     }
 }

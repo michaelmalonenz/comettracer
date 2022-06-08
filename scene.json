@@ -8,31 +8,31 @@
         "type": "sphere",
         "center": {"x": 0, "y": 2, "z": -10},
         "radius": 2,
-        "colour": {"r": 0.9, "g": 0.9, "b": 0},
-        "shininess": 50
+        "colour": {"r": 0.9, "g": 0, "b": 0},
+        "shininess": 10
     },{
         "type": "sphere",
         "center": {"x": -5, "y": 2, "z": -10},
         "radius": 2,
         "colour": {"r": 0, "g": 0, "b": 0.9},
-        "shininess": 20
+        "shininess": 30
     },{
         "type": "sphere",
         "center": {"x": 5, "y": 2, "z": -10},
         "radius": 2,
-        "colour": {"r": 0.9, "g": 0, "b": 0},
-        "shininess": 50
+        "colour": {"r": 0.9, "g": 0.9, "b": 0},
+        "shininess": 5
     },{
         "type": "plane",
         "normal": {"x": 0, "y": 1, "z": 0},
-        "center": {"x": 0, "y": -5, "z": 0},
+        "center": {"x": 0, "y": -2, "z": 0},
         "width": 6,
         "length": 8,
-        "colour": {"r": 0, "g": 0.9, "b": 0},
+        "colour": {"r": 0.3, "g": 0, "b": 0.3},
         "shininess": 0.5
     },{
         "type": "plane",
-        "normal": {"x": 0, "y": 0, "z": 1},
+        "normal": {"x": 0, "y": 0, "z": -1},
         "center": {"x": 0, "y": 0, "z": -10},
         "width": 6,
         "length": 8,
