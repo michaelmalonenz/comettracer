@@ -83,10 +83,7 @@ class Scene {
                 }
             }
 
-            return vector.Vector3D(
-                colour.x,
-                colour.y,
-                colour.z)
+            return colour
         }
 
         return BACKGROUND
