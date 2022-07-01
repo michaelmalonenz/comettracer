@@ -18,6 +18,13 @@
         "shininess": 30
     },{
         "type": "sphere",
+        "center": {"x": 2, "y": 2, "z": -6},
+        "radius": 2,
+        "colour": {"r": 0.9, "g": 0.9, "b": 0.9},
+        "shininess": 5,
+        "material": "glass"
+    },{
+        "type": "sphere",
         "center": {"x": 5, "y": 2, "z": -10},
         "radius": 2,
         "colour": {"r": 0.9, "g": 0.9, "b": 0},

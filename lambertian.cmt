@@ -1,0 +1,19 @@
+import 'vector3D' as vector
+import 'ray' as ray
+import 'scattering' as scattering
+
+var LAMBERTION_SCALAR = 0.09
+
+class Lambertian {
+    scatter(incident_ray, collision) {
+        var in_unit_sphere = vector.Vector3D.random_unit_vector()
+        if (in_unit_sphere.dot(collision.normal) <= 0.0) # Not in the same hemisphere as the normal (inside the polygon)
+            in_unit_sphere *= -1
+        var target = collision.position + in_unit_sphere
+        var direction = target - collision.position
+        if (direction.near_zero?())
+            direction = collision.normal
+        var position = collision.position + (direction * vector.EPSILON)
+        return scattering.Scattering(ray.Ray(position,  direction), collision.object.colour, LAMBERTION_SCALAR)
+    }
+}

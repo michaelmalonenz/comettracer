@@ -1,0 +1,20 @@
+import 'vector3D' as vector
+import 'ray' as ray
+import 'scattering' as scattering
+
+var GLASS_SCALAR = 0.9
+var AIR_REFRACTIVE_INDEX = 1.000273
+var GLASS_REFRACTIVE_INDEX = 1.52
+var GLASS_REFRACTION_RATIO = AIR_REFRACTIVE_INDEX / GLASS_REFRACTIVE_INDEX
+
+class Glass {
+    scatter(incident_ray, collision) {
+        var unit_direction = incident_ray.direction.normalise()
+        var cos_theta = Number.min((unit_direction * -1).dot(collision.normal), 1)
+        var r_out_perp = (unit_direction + collision.normal) * cos_theta * GLASS_REFRACTION_RATIO
+        var r_out_parallel = collision.normal * -(1.0 - r_out_perp.length_squared()).absolute_value().square_root()
+        var refracted = r_out_perp + r_out_parallel
+        var position = collision.position + (refracted * vector.EPSILON)
+        return scattering.Scattering(ray.Ray(position,  refracted), collision.object.colour, GLASS_SCALAR)
+    }
+}

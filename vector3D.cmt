@@ -104,9 +104,9 @@ class Vector3D {
     static random_unit_vector() {
         while (true) {
             var p = Vector3D.random()
-            if (p.length_squared() >= 1)
-                next
-            return p.normalise()
+            if (p.length_squared() < 1) {
+                return p.normalise()
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 import 'intersection' as intersection
 import 'vector3D' as vector
+import 'lambertian' as lambertian
 
 class Plane {
     init(objHash) {
@@ -18,6 +19,21 @@ class Plane {
             objHash['colour']['g'],
             objHash['colour']['b'])
         self.shininess = objHash['shininess']
+        if (objHash.has_key?('material')) {
+            var material = objHash['material']
+            if (material == 'glass') {
+                self.material = glass.Glass()
+            }
+            else if (material == 'lambertian') {
+                self.material = lambertian.Lambertian()
+            }
+            else {
+                throw Exception('Material not found!')
+            }
+        }
+        else {
+            self.material = lambertian.Lambertian()
+        }
     }
 
     intersect(ray) {
@@ -29,5 +45,9 @@ class Plane {
             }
         }
         return nil
+    }
+
+    scatter(incident, collision) {
+        return self.material.scatter(incident, collision)
     }
 }

@@ -75,6 +75,11 @@ class Scene {
                     colour += light.colour * specular * SPECULAR_LIGHT_SCALAR
                 }
 
+                var scattered = intersection.object.scatter(ray.Ray(intersection.position, view_vector), intersection)
+                if (!scattered.nil?()) {
+                    colour += (scattered.colour + self.trace_ray(scattered.ray, depth + 1) * scattered.attenuation) / 2
+                }
+
                 if (intersection.object.shininess > 0) {
                     # reflection
                     # move it the tiniest fraction away from the object, so we don't re-collide with it.
@@ -99,15 +104,23 @@ class Scene {
         for (var y = 0; y < HEIGHT; y+=1) {
             for (var x = 0; x < WIDTH; x+=1) {
                 var colour = vector.Vector3D(0, 0, 0)
-                for (var s = 0; s < SAMPLES_PER_PIXEL; s+=1) {
-                    var pix_x = (x + Number.random() - 0.5)
-                    var pix_y = (y + Number.random() - 0.5)
-                    var u = horizontal * (pix_x / WIDTH)
-                    var v = vertical * (pix_y / HEIGHT)
+                if (SAMPLES_PER_PIXEL > 1) {
+                    for (var s = 0; s < SAMPLES_PER_PIXEL; s+=1) {
+                        var pix_x = (x + Number.random() - 0.5)
+                        var pix_y = (y + Number.random() - 0.5)
+                        var u = horizontal * (pix_x / WIDTH)
+                        var v = vertical * (pix_y / HEIGHT)
+                        var incident = ray.Ray(origin, lower_left_corner + u + v)
+                        colour += self.trace_ray(incident)
+                    }
+                    colour /= SAMPLES_PER_PIXEL
+                }
+                else {
+                    var u = horizontal * (x / WIDTH)
+                    var v = vertical * (y / HEIGHT)
                     var incident = ray.Ray(origin, lower_left_corner + u + v)
                     colour += self.trace_ray(incident)
                 }
-                colour /= SAMPLES_PER_PIXEL
                 image.set_pixel(x, y, colour.r(), colour.g(), colour.b())
             }
         }

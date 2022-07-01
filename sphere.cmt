@@ -1,5 +1,8 @@
 import 'vector3D' as vector
 import 'intersection' as intersection
+import 'lambertian' as lambertian
+import 'glass' as glass
+import 'ray' as ray
 
 
 class Sphere {
@@ -14,6 +17,21 @@ class Sphere {
             objHash['colour']['g'],
             objHash['colour']['b'])
         self.shininess = objHash['shininess']
+        if (objHash.has_key?('material')) {
+            var material = objHash['material']
+            if (material == 'glass') {
+                self.material = glass.Glass()
+            }
+            else if (material == 'lambertian') {
+                self.material = lambertian.Lambertian()
+            }
+            else {
+                throw Exception('Material not found!')
+            }
+        }
+        else {
+            self.material = lambertian.Lambertian()
+        }
     }
 
     intersect(ray) {
@@ -52,5 +70,16 @@ class Sphere {
         var normal = (position - self.center).normalise()
 
         return intersection.Intersection(t, position, normal, self)
+    }
+
+    scatter(incident, collision) {
+        var scattered = self.material.scatter(incident, collision)
+        var internal_ray = ray.Ray(scattered.ray.position, scattered.ray.position + (scattered.ray.direction * vector.EPSILON))
+        var intersection = self.intersect(internal_ray)
+        if (!intersection.nil?()) {
+            var position = intersection.position + (scattered.ray.direction * vector.EPSILON)
+            scattered.ray.position = position
+        }
+        return scattered
     }
 }

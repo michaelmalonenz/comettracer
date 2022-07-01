@@ -1,0 +1,7 @@
+class Scattering {
+    init(scattered_ray, colour, scaler) {
+        self.ray = scattered_ray
+        self.colour = colour
+        self.attenuation = scaler
+    }
+}
