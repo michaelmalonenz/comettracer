@@ -3,8 +3,7 @@ import 'scene' as scene
 import 'ray' as ray
 
 
-var scene = scene.Scene()
-var image = scene.render()
-
+var tracedScene = scene.Scene()
+var image = tracedScene.render()
 
 image.write_to_file("traced.png", IMAGE_FORMAT.PNG)
