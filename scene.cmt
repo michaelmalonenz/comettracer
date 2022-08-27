@@ -30,6 +30,13 @@ class Scene {
         foreach (var obj in scene["objects"]) {
             self.objects.push(objfactory.createObject(obj))
         }
+
+        self.y_increment = HEIGHT / NUM_THREADS
+        self.origin = vector.Vector3D()
+        self.horizontal = vector.Vector3D(4, 0, 0)
+        self.vertical = vector.Vector3D(0, 2, 0)
+        self.lower_left_corner = vector.Vector3D(-2, -1, -1)
+        self.image = Image(WIDTH, HEIGHT)
     }
 
     _find_intersection(incident_ray) {
@@ -95,50 +102,43 @@ class Scene {
         return BACKGROUND
     }
 
-    render() {
-        var image = Image(WIDTH, HEIGHT)
-        var origin = vector.Vector3D()
-        var horizontal = vector.Vector3D(4, 0, 0)
-        var vertical = vector.Vector3D(0, 2, 0)
-        var lower_left_corner = vector.Vector3D(-2, -1, -1)
-        var threads = List(NUM_THREADS)
-        var cond_var = ConditionVariable()
+    _render_pixels(num) {
+        for (var y = self.y_increment * num; y < (self.y_increment * (num + 1)); y+=1) {
+            for (var x = 0; x < WIDTH; x+=1) {
+                var colour = vector.Vector3D(0, 0, 0)
+                if (SAMPLES_PER_PIXEL > 1) {
+                    for (var s = 0; s < SAMPLES_PER_PIXEL; s+=1) {
+                        var pix_x = (x + Number.random() - 0.5)
+                        var pix_y = (y + Number.random() - 0.5)
+                        var u = self.horizontal * (pix_x / WIDTH)
+                        var v = self.vertical * (pix_y / HEIGHT)
+                        var incident = ray.Ray(self.origin, self.lower_left_corner + u + v)
+                        colour += self.trace_ray(incident)
+                    }
+                    colour /= SAMPLES_PER_PIXEL
+                }
+                else {
+                    var u = self.horizontal * (x / WIDTH)
+                    var v = self.vertical * (y / HEIGHT)
+                    var incident = ray.Ray(self.origin, self.lower_left_corner + u + v)
+                    colour += self.trace_ray(incident)
+                }
+                self.image.set_pixel(x, y, colour.r(), colour.g(), colour.b())
+            }
+        }
+    }
 
-        var y_increment = HEIGHT / NUM_THREADS
-        var x_increment = WIDTH / NUM_THREADS
+    render() {
+        var threads = List(NUM_THREADS)
+
         for (var thread_num = 0; thread_num < NUM_THREADS; thread_num += 1) {
             threads[thread_num] = Thread()
-            threads[thread_num].start(|arg| {
-                for (var y = y_increment * arg; y < (y_increment * (arg + 1)); y+=1) {
-                    for (var x = x_increment * arg; x < (x_increment * (arg + 1)); x+=1) {
-                        var colour = vector.Vector3D(0, 0, 0)
-                        if (SAMPLES_PER_PIXEL > 1) {
-                            for (var s = 0; s < SAMPLES_PER_PIXEL; s+=1) {
-                                var pix_x = (x + Number.random() - 0.5)
-                                var pix_y = (y + Number.random() - 0.5)
-                                var u = horizontal * (pix_x / WIDTH)
-                                var v = vertical * (pix_y / HEIGHT)
-                                var incident = ray.Ray(origin, lower_left_corner + u + v)
-                                colour += self.trace_ray(incident)
-                            }
-                            colour /= SAMPLES_PER_PIXEL
-                        }
-                        else {
-                            var u = horizontal * (x / WIDTH)
-                            var v = vertical * (y / HEIGHT)
-                            var incident = ray.Ray(origin, lower_left_corner + u + v)
-                            colour += self.trace_ray(incident)
-                        }
-                        image.set_pixel(x, y, colour.r(), colour.g(), colour.b())
-                    }
-                }
-            }, thread_num)
+            threads[thread_num].start(self._render_pixels, thread_num)
         }
 
         for (var n = 0; n < NUM_THREADS; n+=1) {
-            print('About to join thread: ', n)
             threads[n].join()
         }
-        return image
+        return self.image
     }
 }
