@@ -5,7 +5,7 @@ import 'scattering' as scattering
 var LAMBERTION_SCALAR = 0.09
 
 class Lambertian {
-    scatter(incident_ray, collision) {
+    scatter(incident_ray, collision, inverse = false) {
         var in_unit_sphere = vector.Vector3D.random_unit_vector()
         if (in_unit_sphere.dot(collision.normal) <= 0.0) # Not in the same hemisphere as the normal (inside the polygon)
             in_unit_sphere *= -1
