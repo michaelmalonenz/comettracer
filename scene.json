@@ -20,8 +20,8 @@
         "type": "sphere",
         "center": {"x": 2, "y": 2, "z": -6},
         "radius": 2,
-        "colour": {"r": 0.9, "g": 0.9, "b": 0.9},
-        "shininess": 5,
+        "colour": {"r": 0.2, "g": 0.9, "b": 0.9},
+        "shininess": 50,
         "material": "glass"
     },{
         "type": "sphere",
