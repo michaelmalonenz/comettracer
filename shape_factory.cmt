@@ -1,13 +1,17 @@
 import 'sphere' as sphere
 import 'plane' as plane
+import 'triangle' as triangle
 
-function createObject (objHash) {
+function createShape (objHash) {
     var type = objHash["type"]
     if (type == 'sphere') {
         return sphere.Sphere(objHash)
     }
     else if (type == 'plane') {
         return plane.Plane(objHash)
+    }
+    else if (type == 'triangle') {
+        return triangle.Triangle(objHash)
     }
     else {
         print('Unknown object type: ', type)

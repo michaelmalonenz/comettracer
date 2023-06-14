@@ -1,16 +1,14 @@
-import 'intersection' as intersection
-import 'vector3D' as vector
 import 'shape' as shape
+import 'vector3D' as vector
+import 'intersection' as intersection
 
-class Plane : shape.Shape {
+class Triangle : shape.Shape {
     init(objHash) {
         super.init(objHash)
         self.normal = vector.Vector3D(
             objHash['normal']['x'],
             objHash['normal']['y'],
             objHash['normal']['z']).normalise()
-        self.width = objHash['width']
-        self.length = objHash['length']
     }
 
     intersect(ray) {

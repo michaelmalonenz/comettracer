@@ -1,5 +1,5 @@
 import 'json' as json
-import 'object_factory' as objfactory
+import 'shape_factory' as shape_factory
 import 'light' as light
 import 'vector3D' as vector
 import 'ray' as ray
@@ -20,15 +20,16 @@ var SPECULAR_LIGHT_SCALAR = 0.1
 
 class Scene {
     init() {
-        var scene = json.parse_from_file('scene.json')
+        var scene_path = File.join_path(File.directory(__FILE__).to_string(), 'scene.json')
+        var scene = json.parse_from_file(scene_path)
         self.lights = []
-        self.objects = []
+        self.shapes = []
         foreach (var lightHash in scene["lights"]) {
             var licht = light.Light(lightHash)
             self.lights.push(licht)
         }
         foreach (var obj in scene["objects"]) {
-            self.objects.push(objfactory.createObject(obj))
+            self.shapes.push(shape_factory.createShape(obj))
         }
 
         self.y_increment = HEIGHT / NUM_THREADS
@@ -41,7 +42,7 @@ class Scene {
 
     _find_intersection(incident_ray) {
         var closest = nil
-        foreach (var obj in self.objects) {
+        foreach (var obj in self.shapes) {
             var result = obj.intersect(incident_ray)
             if (!result.nil?())
             {
