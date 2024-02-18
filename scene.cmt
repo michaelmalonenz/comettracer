@@ -124,7 +124,7 @@ class Scene {
                     var incident = ray.Ray(self.origin, self.lower_left_corner + u + v)
                     colour += self.trace_ray(incident)
                 }
-                self.image.set_pixel(x, y, colour.r(), colour.g(), colour.b())
+                self.image.set_pixel(x, y, colour.as_colour())
             }
         }
     }

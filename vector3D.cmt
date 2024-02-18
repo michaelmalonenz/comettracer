@@ -12,16 +12,12 @@ class Vector3D {
         self.z = z
     }
 
-    r() {
-        return clamp(self.x).square_root() * 255
-    }
-
-    g() {
-        return clamp(self.y).square_root() * 255
-    }
-
-    b() {
-        return clamp(self.z).square_root() * 255
+    as_colour() {
+        return Colour(
+            clamp(self.x).square_root() * 255,
+            clamp(self.y).square_root() * 255,
+            clamp(self.z).square_root() * 255
+        )
     }
 
     cross(rhs) {
@@ -41,8 +37,8 @@ class Vector3D {
             length = 1
         return Vector3D(
             self.x / length,
-		    self.y / length,
-		    self.z / length)
+            self.y / length,
+            self.z / length)
     }
 
     length_squared() {
@@ -64,15 +60,15 @@ class Vector3D {
     operator - (other) {
         return Vector3D(
             self.x - other.x,
-		    self.y - other.y,
-		    self.z - other.z)
+            self.y - other.y,
+            self.z - other.z)
     }
 
     operator + (other) {
         return Vector3D(
             self.x + other.x,
-		    self.y + other.y,
-		    self.z + other.z)
+            self.y + other.y,
+            self.z + other.z)
     }
 
     operator * (scalar) {
